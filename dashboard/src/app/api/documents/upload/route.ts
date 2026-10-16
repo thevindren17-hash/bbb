@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 
 import { chunkText } from "@/lib/chunk";
-import { embedTexts } from "@/lib/embeddings";
+import { EMBEDDING_MODEL, embedTexts } from "@/lib/embeddings";
 import { extractText } from "@/lib/extract";
 import { createClient } from "@/lib/supabase/server";
+import { logTokenUsage } from "@/lib/tokenTracking";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -58,7 +59,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const embeddings = await embedTexts(chunks);
+    const { embeddings, promptTokens } = await embedTexts(chunks);
     const rows = chunks.map((content, i) => ({
       document_id: document.id,
       chunk_index: i,
@@ -68,6 +69,8 @@ export async function POST(request: Request) {
 
     const { error: chunkError } = await supabase.from("document_chunks").insert(rows);
     if (chunkError) throw new Error(chunkError.message);
+
+    await logTokenUsage(supabase, "embedding_upload", EMBEDDING_MODEL, promptTokens);
   } catch (err) {
     // Roll back the document row so we don't leave an unembedded, unsearchable entry.
     await supabase.from("documents").delete().eq("id", document.id);

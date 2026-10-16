@@ -14,6 +14,7 @@ import os
 import vector_retrieval
 from retrieval import search as keyword_search
 from supabase_client import get_client
+from token_tracking import log_usage
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +73,13 @@ def _llm_synthesize(query, docs, company):
             ],
             temperature=0.2,
         )
+        if response.usage:
+            log_usage(
+                "chat",
+                OPENAI_MODEL,
+                response.usage.prompt_tokens,
+                response.usage.completion_tokens,
+            )
         return response.choices[0].message.content.strip()
     except Exception:
         logger.exception("LLM synthesis failed; falling back to verbatim retrieval.")

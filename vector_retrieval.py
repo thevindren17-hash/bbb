@@ -7,6 +7,7 @@ import logging
 import os
 
 from supabase_client import get_client
+from token_tracking import log_usage
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,8 @@ def _embed_query(query):
     try:
         client = OpenAI(api_key=api_key)
         response = client.embeddings.create(model=EMBEDDING_MODEL, input=[query])
+        if response.usage:
+            log_usage("embedding_query", EMBEDDING_MODEL, response.usage.prompt_tokens)
         return response.data[0].embedding
     except Exception:
         logger.exception("Query embedding failed.")
