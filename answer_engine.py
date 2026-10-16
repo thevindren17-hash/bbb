@@ -19,13 +19,30 @@ logger = logging.getLogger(__name__)
 
 OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 
-SYSTEM_PROMPT = (
+DEFAULT_SYSTEM_PROMPT = (
     "You are an HR assistant for {company}. Answer the staff member's question "
     "using ONLY the context clauses provided below. If the context does not "
     "contain enough information to answer, say so and suggest contacting HR "
     "directly - do not make anything up. Always cite the source document/clause "
     "for each fact you state. Reply in the same language as the question."
 )
+
+
+def _get_system_prompt():
+    """Read the (admin-editable, via the dashboard Settings page) system
+    prompt from Supabase, falling back to the default if unset/unavailable."""
+    supabase = get_client()
+    if supabase is None:
+        return DEFAULT_SYSTEM_PROMPT
+    try:
+        response = (
+            supabase.table("settings").select("value").eq("key", "system_prompt").execute()
+        )
+        if response.data:
+            return response.data[0]["value"]
+    except Exception:
+        logger.exception("Failed to fetch system_prompt setting; using default.")
+    return DEFAULT_SYSTEM_PROMPT
 
 
 def _format_context(docs):
@@ -46,10 +63,11 @@ def _llm_synthesize(query, docs, company):
     try:
         client = OpenAI(api_key=api_key)
         context = _format_context(docs)
+        system_prompt = _get_system_prompt().replace("{company}", company)
         response = client.chat.completions.create(
             model=OPENAI_MODEL,
             messages=[
-                {"role": "system", "content": SYSTEM_PROMPT.format(company=company)},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": f"Context:\n{context}\n\nQuestion: {query}"},
             ],
             temperature=0.2,

@@ -14,6 +14,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Link href="/analytics" className="text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white">
             Analytics
           </Link>
+          <Link href="/settings" className="text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white">
+            Settings
+          </Link>
         </nav>
         <form action={signOut}>
           <button type="submit" className="text-sm text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white">
