@@ -6,6 +6,11 @@ import { extractText } from "@/lib/extract";
 import { createClient } from "@/lib/supabase/server";
 import { logTokenUsage } from "@/lib/tokenTracking";
 
+// Vercel caps serverless function request bodies at 4.5 MB (platform limit,
+// not configurable). Stay under it so uploads fail with a clear message
+// instead of a 413 from the platform.
+const MAX_FILE_BYTES = 4 * 1024 * 1024;
+
 export async function POST(request: Request) {
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
@@ -27,6 +32,13 @@ export async function POST(request: Request) {
 
   if (!(file instanceof File) || !title) {
     return NextResponse.json({ error: "Missing file or title." }, { status: 400 });
+  }
+
+  if (file.size > MAX_FILE_BYTES) {
+    return NextResponse.json(
+      { error: `File is too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max is 4 MB.` },
+      { status: 413 }
+    );
   }
 
   let text: string;

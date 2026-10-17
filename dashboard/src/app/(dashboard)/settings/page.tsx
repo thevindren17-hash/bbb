@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/page-header";
 import { createClient } from "@/lib/supabase/server";
 
 import { PromptForm } from "./prompt-form";
@@ -21,15 +22,12 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold">Settings</h1>
-        <p className="text-sm text-zinc-500">
-          Controls how the bot answers questions on every channel (Telegram, and WhatsApp once
-          added).
-        </p>
-      </div>
+      <PageHeader
+        title="Settings"
+        description="Controls how the bot answers questions on every channel (Telegram, and WhatsApp once added)."
+      />
 
-      <div className="max-w-2xl space-y-2">
+      <div className="max-w-2xl space-y-3 rounded-xl border border-border bg-surface p-5 shadow-sm">
         <h2 className="text-sm font-medium">System prompt</h2>
         <PromptForm initialValue={currentPrompt} />
       </div>

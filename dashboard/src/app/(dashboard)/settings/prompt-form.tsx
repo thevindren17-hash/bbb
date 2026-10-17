@@ -36,18 +36,17 @@ export function PromptForm({ initialValue }: { initialValue: string }) {
           setStatus("idle");
         }}
         rows={8}
-        className="w-full rounded border border-black/15 px-3 py-2 font-mono text-sm dark:border-white/20 dark:bg-transparent"
+        className="w-full rounded-lg border border-border bg-background px-3 py-2 font-mono text-sm outline-none transition-colors focus:border-accent"
       />
-      <p className="text-xs text-zinc-500">
-        Use <code className="rounded bg-black/[0.06] px-1 dark:bg-white/[0.08]">{"{company}"}</code>{" "}
-        anywhere you want the company name inserted. Takes effect on the bot&apos;s next reply -
-        no redeploy needed.
+      <p className="text-xs text-foreground-muted">
+        Use <code className="rounded bg-surface-muted px-1">{"{company}"}</code> anywhere you want
+        the company name inserted. Takes effect on the bot&apos;s next reply - no redeploy needed.
       </p>
       <div className="flex items-center gap-3">
         <button
           type="submit"
           disabled={status === "saving"}
-          className="rounded bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-white dark:text-black"
+          className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
         >
           {status === "saving" ? "Saving..." : "Save"}
         </button>

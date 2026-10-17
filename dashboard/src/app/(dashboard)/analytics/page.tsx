@@ -1,3 +1,7 @@
+import { MessageCircleQuestion, MessageCircleX } from "lucide-react";
+
+import { PageHeader } from "@/components/page-header";
+import { StatCard } from "@/components/stat-card";
 import { createClient } from "@/lib/supabase/server";
 
 type LogRow = {
@@ -28,59 +32,54 @@ export default async function AnalyticsPage() {
   const rows = recent ?? [];
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-xl font-semibold">Analytics</h1>
+    <div className="space-y-8">
+      <PageHeader title="Analytics" description="Questions staff have asked the bot, and where it's falling short." />
 
-      <div className="flex gap-4">
-        <StatCard label="Questions asked" value={totalCount ?? 0} />
-        <StatCard label="Unanswered (doc gaps)" value={unansweredCount ?? 0} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <StatCard label="Questions asked" value={totalCount ?? 0} icon={MessageCircleQuestion} />
+        <StatCard label="Unanswered (doc gaps)" value={unansweredCount ?? 0} icon={MessageCircleX} />
       </div>
 
       <div>
-        <h2 className="mb-2 text-sm font-medium text-zinc-500">Recent questions</h2>
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-black/10 text-zinc-500 dark:border-white/15">
-            <tr>
-              <th className="py-2 font-medium">Question</th>
-              <th className="py-2 font-medium">Channel</th>
-              <th className="py-2 font-medium">Source</th>
-              <th className="py-2 font-medium">When</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, i) => (
-              <tr key={i} className="border-b border-black/5 dark:border-white/10">
-                <td className="py-2">{row.question}</td>
-                <td className="py-2 text-zinc-500">{row.channel}</td>
-                <td className="py-2 text-zinc-500">
-                  {row.generated_by === "none" ? (
-                    <span className="text-red-600">no match</span>
-                  ) : (
-                    row.generated_by
-                  )}
-                </td>
-                <td className="py-2 text-zinc-500">{new Date(row.created_at).toLocaleString()}</td>
-              </tr>
-            ))}
-            {rows.length === 0 && (
+        <h2 className="mb-3 text-sm font-medium text-foreground-muted">Recent questions</h2>
+        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+          <table className="w-full text-left text-sm">
+            <thead className="border-b border-border bg-surface-muted text-foreground-muted">
               <tr>
-                <td colSpan={4} className="py-4 text-zinc-500">
-                  No questions logged yet.
-                </td>
+                <th className="px-4 py-3 font-medium">Question</th>
+                <th className="px-4 py-3 font-medium">Channel</th>
+                <th className="px-4 py-3 font-medium">Source</th>
+                <th className="px-4 py-3 font-medium">When</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => (
+                <tr key={i} className="border-b border-border last:border-0">
+                  <td className="px-4 py-3">{row.question}</td>
+                  <td className="px-4 py-3 text-foreground-muted">{row.channel}</td>
+                  <td className="px-4 py-3 text-foreground-muted">
+                    {row.generated_by === "none" ? (
+                      <span className="text-red-600">no match</span>
+                    ) : (
+                      row.generated_by
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-foreground-muted">
+                    {new Date(row.created_at).toLocaleString()}
+                  </td>
+                </tr>
+              ))}
+              {rows.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-4 py-6 text-center text-foreground-muted">
+                    No questions logged yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  );
-}
-
-function StatCard({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-lg border border-black/10 px-4 py-3 dark:border-white/15">
-      <div className="text-2xl font-semibold">{value}</div>
-      <div className="text-sm text-zinc-500">{label}</div>
     </div>
   );
 }

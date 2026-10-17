@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/page-header";
 import { createClient } from "@/lib/supabase/server";
 
 import { DocumentList } from "./document-list";
@@ -31,13 +32,10 @@ export default async function DocumentsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold">Documents</h1>
-        <p className="text-sm text-zinc-500">
-          Upload HR policy documents. They are chunked, embedded, and made searchable by the bot
-          automatically.
-        </p>
-      </div>
+      <PageHeader
+        title="Documents"
+        description="Upload HR policy documents. They are chunked, embedded, and made searchable by the bot automatically."
+      />
 
       <UploadForm />
 

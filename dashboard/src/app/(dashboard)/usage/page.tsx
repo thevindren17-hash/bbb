@@ -1,3 +1,5 @@
+import { PageHeader } from "@/components/page-header";
+import { StatCard } from "@/components/stat-card";
 import { createClient } from "@/lib/supabase/server";
 
 import { UsageChart } from "./usage-chart";
@@ -81,66 +83,56 @@ export default async function UsagePage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-xl font-semibold">Usage</h1>
-        <p className="text-sm text-zinc-500">
-          OpenAI token consumption and estimated cost across every channel.
-        </p>
-      </div>
+      <PageHeader
+        title="Usage"
+        description="OpenAI token consumption and estimated cost across every channel."
+      />
 
       {error && <p className="text-sm text-red-600">{error.message}</p>}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <StatCard label="Today" tokens={todayTokens} cost={todayCost} />
-        <StatCard label="Last 7 days" tokens={weekTokens} cost={weekCost} />
-        <StatCard label="Last 30 days" tokens={monthTokens} cost={monthCost} />
+        <StatCard label="Today" value={`${todayTokens.toLocaleString()} tok`} sublabel={`$${todayCost.toFixed(4)} est.`} />
+        <StatCard label="Last 7 days" value={`${weekTokens.toLocaleString()} tok`} sublabel={`$${weekCost.toFixed(4)} est.`} />
+        <StatCard label="Last 30 days" value={`${monthTokens.toLocaleString()} tok`} sublabel={`$${monthCost.toFixed(4)} est.`} />
       </div>
 
       <div>
-        <h2 className="mb-3 text-sm font-medium text-zinc-500">Daily tokens (last 30 days)</h2>
+        <h2 className="mb-3 text-sm font-medium text-foreground-muted">Daily tokens (last 30 days)</h2>
         <UsageChart data={chartData} />
       </div>
 
       <div>
-        <h2 className="mb-2 text-sm font-medium text-zinc-500">
+        <h2 className="mb-3 text-sm font-medium text-foreground-muted">
           Breakdown by source (last 30 days)
         </h2>
-        <table className="w-full max-w-xl text-left text-sm">
-          <thead className="border-b border-black/10 text-zinc-500 dark:border-white/15">
-            <tr>
-              <th className="py-2 font-medium">Source</th>
-              <th className="py-2 font-medium">Tokens</th>
-              <th className="py-2 font-medium">Est. cost</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(bySource).map(([source, { tokens, cost }]) => (
-              <tr key={source} className="border-b border-black/5 dark:border-white/10">
-                <td className="py-2">{SOURCE_LABELS[source] ?? source}</td>
-                <td className="py-2 tabular-nums text-zinc-500">{tokens.toLocaleString()}</td>
-                <td className="py-2 tabular-nums text-zinc-500">${cost.toFixed(4)}</td>
-              </tr>
-            ))}
-            {Object.keys(bySource).length === 0 && (
+        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+          <table className="w-full max-w-xl text-left text-sm">
+            <thead className="border-b border-border bg-surface-muted text-foreground-muted">
               <tr>
-                <td colSpan={3} className="py-4 text-zinc-500">
-                  No usage recorded yet.
-                </td>
+                <th className="px-4 py-3 font-medium">Source</th>
+                <th className="px-4 py-3 font-medium">Tokens</th>
+                <th className="px-4 py-3 font-medium">Est. cost</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {Object.entries(bySource).map(([source, { tokens, cost }]) => (
+                <tr key={source} className="border-b border-border last:border-0">
+                  <td className="px-4 py-3">{SOURCE_LABELS[source] ?? source}</td>
+                  <td className="px-4 py-3 tabular-nums text-foreground-muted">{tokens.toLocaleString()}</td>
+                  <td className="px-4 py-3 tabular-nums text-foreground-muted">${cost.toFixed(4)}</td>
+                </tr>
+              ))}
+              {Object.keys(bySource).length === 0 && (
+                <tr>
+                  <td colSpan={3} className="px-4 py-6 text-center text-foreground-muted">
+                    No usage recorded yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  );
-}
-
-function StatCard({ label, tokens, cost }: { label: string; tokens: number; cost: number }) {
-  return (
-    <div className="rounded-lg border border-black/10 px-4 py-3 dark:border-white/15">
-      <div className="text-2xl font-semibold tabular-nums">{tokens.toLocaleString()}</div>
-      <div className="text-sm text-zinc-500">{label} &middot; tokens</div>
-      <div className="mt-1 text-sm tabular-nums text-zinc-500">${cost.toFixed(4)} est.</div>
     </div>
   );
 }

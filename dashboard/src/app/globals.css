@@ -1,28 +1,52 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f9f9f7;
+  --foreground: #0b0b0b;
+  --foreground-muted: #6b6a66;
+  --surface: #ffffff;
+  --surface-muted: #f3f3f1;
+  --border: rgba(11, 11, 11, 0.1);
+  --accent: #2a78d6;
+  --accent-hover: #1c5cab;
+  --accent-soft: #eaf2fc;
+  --accent-foreground: #ffffff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-foreground: var(--accent-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0d0d0d;
+    --foreground: #f0efec;
+    --foreground-muted: #a3a29c;
+    --surface: #161616;
+    --surface-muted: #1c1c1b;
+    --border: rgba(255, 255, 255, 0.1);
+    --accent: #3987e5;
+    --accent-hover: #5598e7;
+    --accent-soft: rgba(57, 135, 229, 0.16);
+    --accent-foreground: #ffffff;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
 /* Data-viz tokens (dataviz skill reference palette) - used by chart components. */
@@ -35,6 +59,8 @@ body {
   --viz-grid: #e1e0d9;
   --viz-baseline: #c3c2b7;
   --viz-series-1: #2a78d6;
+  --viz-series-2: #eb6834;
+  --viz-series-3: #1baf7a;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .viz-root {
@@ -46,6 +72,8 @@ body {
     --viz-grid: #2c2c2a;
     --viz-baseline: #383835;
     --viz-series-1: #3987e5;
+    --viz-series-2: #d95926;
+    --viz-series-3: #199e70;
   }
 }
 :root[data-theme="dark"] .viz-root {
@@ -57,4 +85,6 @@ body {
   --viz-grid: #2c2c2a;
   --viz-baseline: #383835;
   --viz-series-1: #3987e5;
+  --viz-series-2: #d95926;
+  --viz-series-3: #199e70;
 }
